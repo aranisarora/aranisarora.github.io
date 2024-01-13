@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadStockItems();
 
-    document.getElementById('addItem').addEventListener('click', () => {
-        const name = document.getElementById('itemName').value.trim();
-        const quantity = document.getElementById('itemQuantity').value.trim();
-        if (name && quantity) {
-            addOrUpdateItem({ name, quantity });
-            clearInputFields();
-        } else {
-            alert('Please fill in all fields');
-        }
-    });
+    const stockList = document.getElementById('stockList');
+    if (stockList) {
+        stockList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-button')) {
+                const row = event.target.parentElement.parentElement;
+                const id = row.getAttribute('data-id');
+                removeItem(id, row);
+            }
+        });
+    }
 });
 
 function loadStockItems() {
@@ -29,7 +29,7 @@ function addItemToTable(item) {
     const actionsCell = row.insertCell(2);
 
     nameCell.textContent = item.name;
-    quantityCell.textContent = item.quantity;
+    quantityCell.textContent = `${item.quantity} ${item.unit}`; // Display quantity with unit
 
     const editButton = createButton('Edit', () => showEditItemModal(item, row));
     const removeButton = createButton('Remove', () => removeItem(item._id, row));
@@ -46,7 +46,29 @@ function createButton(text, onClick) {
     return button;
 }
 
-function addOrUpdateItem(item, rowToUpdate = null) {
+function removeItem(id, row) {
+    fetch(`http://localhost:3000/items/${id}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(() => {
+        stockList.deleteRow(row.rowIndex);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function showEditItemModal(item, row) {
+    const newName = prompt('Enter new name', item.name);
+    const newQuantity = prompt('Enter new quantity', item.quantity);
+    const newUnit = prompt('Select a unit:', item.unit);
+
+    console.log(`${newName}:${newQuantity}:${newUnit}`);
+    const updatedItem = { ...item, name: newName, quantity: newQuantity, unit: newUnit };
+    
+    addOrUpdateItem(updatedItem, row); // Pass the updated item and row to the addOrUpdateItem function
+}
+
+function addOrUpdateItem(item, row) {
     const method = item._id ? 'PUT' : 'POST';
     const url = item._id ? `http://localhost:3000/items/${item._id}` : 'http://localhost:3000/items';
 
@@ -58,44 +80,10 @@ function addOrUpdateItem(item, rowToUpdate = null) {
         body: JSON.stringify(item),
     })
     .then(response => response.json())
-    .then(data => {
-        if (rowToUpdate) {
-            updateRow(rowToUpdate, data);
-        } else {
-            addItemToTable(data);
-        }
+    .then(item => {
+        // Update the row content with the updated data
+        row.cells[0].textContent = item.name;
+        row.cells[1].textContent = `${item.quantity} ${item.unit}`;
     })
     .catch(error => console.error('Error:', error));
-}
-
-function removeItem(id, row) {
-    fetch(`http://localhost:3000/items/${id}`, {
-        method: 'DELETE',
-    })
-    .then(response => response.json())
-    .then(() => {
-        row.remove(); // directly remove the row
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function showEditItemModal(item, row) {
-    // This function should create a modal or form to edit the item
-    // For simplicity, using prompt
-    const newName = prompt('Enter new name', item.name);
-    const newQuantity = prompt('Enter new quantity', item.quantity);
-
-    if (newName && newQuantity) {
-        addOrUpdateItem({ ...item, name: newName, quantity: newQuantity }, row);
-    }
-}
-
-function updateRow(row, item) {
-    row.cells[0].textContent = item.name;
-    row.cells[1].textContent = item.quantity;
-}
-
-function clearInputFields() {
-    document.getElementById('itemName').value = '';
-    document.getElementById('itemQuantity').value = '';
 }

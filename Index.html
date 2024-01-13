@@ -5,29 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Cafeteria Stock Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.4/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container mx-auto px-4">
-        <h1 class="text-4xl font-bold text-center my-6">Cafeteria Stock Manager</h1>
-        <div class="mb-4">
-            <input type="text" id="itemName" placeholder="Item Name" class="border p-2 mr-2">
-            <input type="number" id="itemQuantity" placeholder="Quantity" class="border p-2 mr-2">
-            <button id="addItem" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Item</button>
+<body class="bg-gray-100">
+    <header class="bg-gray-800 text-white">
+        <div class="container mx-auto flex justify-between items-center py-4">
+            <div class="text-lg font-semibold">
+                <a href="index.html" class="hover:text-gray-300">School Cafeteria Stock Manager</a>
+            </div>
+            <nav>
+                <a href="input-data.html" class="hover:text-gray-300 mx-2">Input Data</a>
+                <a href="view-stock.html" class="hover:text-gray-300 mx-2">View Stock</a>
+                <a href="about.html" class="hover:text-gray-300 mx-2">About</a>
+            </nav>
         </div>
-        <table class="table-auto w-full">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2">Name</th>
-                    <th class="px-4 py-2">Quantity</th>
-                    <th class="px-4 py-2">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="stockList">
-                <!-- Items will be added here dynamically -->
-            </tbody>
-        </table>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Welcome to the School Cafeteria Stock Manager</h1>
+        <p class="text-center">Choose an option from the menu to begin.</p>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>

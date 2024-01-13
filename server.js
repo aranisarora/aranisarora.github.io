@@ -9,21 +9,23 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB using your MongoDB Atlas connection string
-mongoose.connect("mongodb+srv://Test:pass@stockmanager.8re0unt.mongodb.net/?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => {
-    console.log('Connected to MongoDB');
-})
-.catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-});
+mongoose.connect("mongodb+srv://Test:pass@stockmanager.8re0unt.mongodb.net/?retryWrites=true&w=majority",)
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+    });
 
 // Define the item schema and model
 const itemSchema = new mongoose.Schema({
     name: String,
     quantity: Number,
+    unit: {
+        type: String,
+        default: 'kg', // Set a default value if needed
+        require: true
+    }
 });
 
 const Item = mongoose.model('Item', itemSchema);
@@ -31,8 +33,10 @@ const Item = mongoose.model('Item', itemSchema);
 // Create a new item
 app.post('/items', async (req, res) => {
     try {
-        const { name, quantity } = req.body;
-        const newItem = new Item({ name, quantity });
+        const { name, quantity, unit } = req.body; // Include unit in the request body
+        console.log(unit);
+
+        const newItem = new Item({ name, quantity, unit }); // Store unit in the database
         const savedItem = await newItem.save();
         res.json(savedItem);
     } catch (error) {
@@ -54,8 +58,9 @@ app.get('/items', async (req, res) => {
 app.put('/items/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
-        const { name, quantity } = req.body;
-        const updatedItem = await Item.findByIdAndUpdate(itemId, { name, quantity }, { new: true });
+        const { name, quantity, unit } = req.body;
+        console.log(unit);
+        const updatedItem = await Item.findByIdAndUpdate(itemId, { name, quantity, unit }, { new: true });
         res.json(updatedItem);
     } catch (error) {
         res.status(500).json({ error: 'Failed to update item' });
