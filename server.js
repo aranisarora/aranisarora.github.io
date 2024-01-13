@@ -34,8 +34,6 @@ const Item = mongoose.model('Item', itemSchema);
 app.post('/items', async (req, res) => {
     try {
         const { name, quantity, unit } = req.body; // Include unit in the request body
-        console.log(unit);
-
         const newItem = new Item({ name, quantity, unit }); // Store unit in the database
         const savedItem = await newItem.save();
         res.json(savedItem);
@@ -59,7 +57,6 @@ app.put('/items/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
         const { name, quantity, unit } = req.body;
-        console.log(unit);
         const updatedItem = await Item.findByIdAndUpdate(itemId, { name, quantity, unit }, { new: true });
         res.json(updatedItem);
     } catch (error) {
