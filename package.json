@@ -1,0 +1,34 @@
+{
+  "name": "aranisarora.github.io",
+  "version": "1.0.0",
+  "description": "Stock manager for Inventure Academy",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aranisarora/aranisarora.github.io.git"
+  },
+  "keywords": [
+    "Stock",
+    "Manager",
+    "Educational",
+    "Student",
+    "Project"
+  ],
+  "author": "AranisArora",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aranisarora/aranisarora.github.io/issues"
+  },
+  "homepage": "https://github.com/aranisarora/aranisarora.github.io#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.4"
+  }
+}

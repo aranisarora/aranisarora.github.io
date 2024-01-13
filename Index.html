@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Test Website</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Cafeteria Stock Manager</title>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Test Website</h1>
-    </header>
-    <main>
-        <p>This is a simple static website for testing purposes.</p>
-        <button id="testButton">Click Me!</button>
-    </main>
-    <footer>
-        <p>© 2024 Simple Test Website</p>
-    </footer>
+    <h1>Cafeteria Stock Manager</h1>
+
+    <!-- Display stock items -->
+    <div id="stockItems"></div>
+
+    <!-- Add item form -->
+    <form id="addItemForm">
+        <input type="text" id="itemName" placeholder="Item Name" required>
+        <input type="number" id="itemQuantity" placeholder="Quantity" required>
+        <button type="submit">Add Item</button>
+    </form>
+
     <script src="script.js"></script>
 </body>
 </html>
