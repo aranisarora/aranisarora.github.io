@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafeteria Stock Manager</title>
+    <title>School Cafeteria Stock Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.4/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Cafeteria Stock Manager</h1>
-
-    <!-- Display stock items -->
-    <div id="stockItems"></div>
-
-    <!-- Add item form -->
-    <form id="addItemForm">
-        <input type="text" id="itemName" placeholder="Item Name" required>
-        <input type="number" id="itemQuantity" placeholder="Quantity" required>
-        <button type="submit">Add Item</button>
-    </form>
-
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold text-center my-6">Cafeteria Stock Manager</h1>
+        <div class="mb-4">
+            <input type="text" id="itemName" placeholder="Item Name" class="border p-2 mr-2">
+            <input type="number" id="itemQuantity" placeholder="Quantity" class="border p-2 mr-2">
+            <button id="addItem" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Item</button>
+        </div>
+        <table class="table-auto w-full">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2">Name</th>
+                    <th class="px-4 py-2">Quantity</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="stockList">
+                <!-- Items will be added here dynamically -->
+            </tbody>
+        </table>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

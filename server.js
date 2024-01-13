@@ -1,63 +1,79 @@
+// Server.js (with MongoDB integration)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+const bodyParser = require('body-parser');
 
 const app = express();
-
 app.use(cors());
-app.use(express.json()); // for parsing application/json
-console.log(process.env.MONGODB_URI);
+app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+// Connect to MongoDB using your MongoDB Atlas connection string
+mongoose.connect("mongodb+srv://Test:pass@stockmanager.8re0unt.mongodb.net/?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => {
+    console.log('Connected to MongoDB');
+})
+.catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+});
 
-// Schema and Model
+// Define the item schema and model
 const itemSchema = new mongoose.Schema({
     name: String,
-    quantity: Number
+    quantity: Number,
 });
 
 const Item = mongoose.model('Item', itemSchema);
 
-// Routes
+// Create a new item
+app.post('/items', async (req, res) => {
+    try {
+        const { name, quantity } = req.body;
+        const newItem = new Item({ name, quantity });
+        const savedItem = await newItem.save();
+        res.json(savedItem);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add item' });
+    }
+});
+
+// Get all items
 app.get('/items', async (req, res) => {
     try {
         const items = await Item.find();
         res.json(items);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ error: 'Failed to fetch items' });
     }
 });
 
-app.post('/items', async (req, res) => {
-    const newItem = new Item({
-        name: req.body.name,
-        quantity: req.body.quantity
-    });
-
+// Edit (Update) an item by ID
+app.put('/items/:id', async (req, res) => {
     try {
-        const savedItem = await newItem.save();
-        res.status(201).json(savedItem);
+        const itemId = req.params.id;
+        const { name, quantity } = req.body;
+        const updatedItem = await Item.findByIdAndUpdate(itemId, { name, quantity }, { new: true });
+        res.json(updatedItem);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ error: 'Failed to update item' });
     }
 });
 
+// Delete an item by ID
 app.delete('/items/:id', async (req, res) => {
     try {
-        const item = await Item.findByIdAndDelete(req.params.id);
-        if (!item) res.status(404).send("No item found");
-        res.status(200).send("Item deleted");
+        const itemId = req.params.id;
+        await Item.findByIdAndDelete(itemId);
+        res.json({ message: 'Item deleted' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ error: 'Failed to delete item' });
     }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });

@@ -1,0 +1,63 @@
+/* Add your custom styles here */
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #3490dc;
+    color: white;
+}
+
+nav {
+    background-color: #f3f4f6;
+}
+
+nav a {
+    color: #4a5568;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    color: #2d3748;
+}
+
+main {
+    padding: 20px;
+}
+
+form {
+    background-color: #f3f4f6;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+input[type="text"],
+input[type="number"] {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #3490dc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2779bd;
+}
+
+#stockItems {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 20px;
+}
+
+/* Add more custom styles here as needed */
