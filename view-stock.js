@@ -25,48 +25,46 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadStockItems() {
     fetch('http://localhost:3000/items')
         .then(response => response.json())
-        .then(items => items.forEach(item => addItemToTable(item)))
+        .then(items => items.forEach((item, index) => addItemToTable(item, index)))
         .catch(error => console.error('Error fetching items:', error));
 }
 
-function addItemToTable(item) {
+function addItemToTable(item, index) {
     const stockList = document.getElementById('stockList');
     const row = stockList.insertRow();
     row.setAttribute('data-id', item._id);
-    const nameCell = row.insertCell(0);
-    const quantityCell = row.insertCell(1);
-    const unitCell = row.insertCell(2);
-    const actionsCell = row.insertCell(3);
+    row.classList.add('border-b');
 
+    const itemNoCell = row.insertCell(0);
+    itemNoCell.textContent = index + 1;
+    itemNoCell.classList.add('border', 'px-4', 'py-2');
+
+    const nameCell = row.insertCell(1);
+    nameCell.classList.add('border', 'px-4', 'py-2');
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
     nameInput.value = item.name;
     nameInput.disabled = true;
     nameInput.classList.add('rounded', 'px-2', 'py-1');
-
-    const quantityInput = document.createElement('input');
-    quantityInput.type = 'text';
-    quantityInput.value = item.quantity;
-    quantityInput.disabled = true;
-    quantityInput.classList.add('rounded', 'px-2', 'py-1');
-    
-    const unitInput = document.createElement('input');
-    unitInput.type = 'text';
-    unitInput.value = item.unit;
-    unitInput.disabled = true;
-    unitInput.classList.add('rounded', 'px-2', 'py-1');
-
     nameCell.appendChild(nameInput);
-    quantityCell.appendChild(quantityInput);
-    unitCell.appendChild(unitInput);
 
+    const quantityCell = row.insertCell(2);
+    quantityCell.classList.add('border', 'px-4', 'py-2');
+    const combinedQuantityUnitInput = document.createElement('input');
+    combinedQuantityUnitInput.type = 'text';
+    combinedQuantityUnitInput.value = `${item.quantity} ${item.unit}`;
+    combinedQuantityUnitInput.disabled = true;
+    combinedQuantityUnitInput.classList.add('rounded', 'px-2', 'py-1');
+    quantityCell.appendChild(combinedQuantityUnitInput);
+
+    const actionsCell = row.insertCell(3);
+    actionsCell.classList.add('border', 'px-4', 'py-2');
     const editButton = createButton('Edit', 'edit-button');
     const removeButton = createButton('Remove', 'remove-button');
     const cancelButton = createButton('Cancel', 'cancel-button');
-    cancelButton.style.display = 'none'; // Initially hide cancel button
+    cancelButton.style.display = 'none';
     const saveButton = createButton('Save', 'save-button');
-    saveButton.style.display = 'none'; // Initially hide save button
-
+    saveButton.style.display = 'none';
     actionsCell.appendChild(editButton);
     actionsCell.appendChild(removeButton);
     actionsCell.appendChild(cancelButton);
@@ -81,75 +79,58 @@ function createButton(text, className) {
 }
 
 function editItem(row) {
-    const nameInput = row.cells[0].querySelector('input');
-    const quantityInput = row.cells[1].querySelector('input');
-    const unitInput = row.cells[2].querySelector('input');
+    const nameInput = row.cells[1].querySelector('input');
+    const combinedQuantityUnitInput = row.cells[2].querySelector('input');
     const editButton = row.cells[3].querySelector('.edit-button');
     const cancelButton = row.cells[3].querySelector('.cancel-button');
     const saveButton = row.cells[3].querySelector('.save-button');
 
-    // Save the original values
-    const originalName = nameInput.value;
-    const originalQuantity = quantityInput.value;
-    const originalUnit = unitInput.value;
-
     nameInput.disabled = false;
-    quantityInput.disabled = false;
-    unitInput.disabled = false;
+    combinedQuantityUnitInput.disabled = false;
     editButton.style.display = 'none';
     saveButton.style.display = 'inline-block';
     cancelButton.style.display = 'inline-block';
 
-    // Auto-select the first input field
     nameInput.focus();
 }
 
 function cancelEdit(row) {
-    const nameInput = row.cells[0].querySelector('input');
-    const quantityInput = row.cells[1].querySelector('input');
-    const unitInput = row.cells[2].querySelector('input');
+    const nameInput = row.cells[1].querySelector('input');
+    const combinedQuantityUnitInput = row.cells[2].querySelector('input');
     const editButton = row.cells[3].querySelector('.edit-button');
     const cancelButton = row.cells[3].querySelector('.cancel-button');
     const saveButton = row.cells[3].querySelector('.save-button');
 
-    // Revert to original values
-    nameInput.value = originalName;
-    quantityInput.value = originalQuantity;
-    unitInput.value = originalUnit;
+    nameInput.value = row.originalData.name;
+    combinedQuantityUnitInput.value = `${row.originalData.quantity} ${row.originalData.unit}`;
 
     nameInput.disabled = true;
-    quantityInput.disabled = true;
-    unitInput.disabled = true;
+    combinedQuantityUnitInput.disabled = true;
     editButton.style.display = 'inline-block';
     saveButton.style.display = 'none';
     cancelButton.style.display = 'none';
 }
 
 function saveItem(row) {
-    const nameInput = row.cells[0].querySelector('input');
-    const quantityInput = row.cells[1].querySelector('input');
-    const unitInput = row.cells[2].querySelector('input');
+    const nameInput = row.cells[1].querySelector('input');
+    const combinedQuantityUnitInput = row.cells[2].querySelector('input');
+    const combinedQuantityUnit = combinedQuantityUnitInput.value.trim().split(" ");
     const editButton = row.cells[3].querySelector('.edit-button');
     const cancelButton = row.cells[3].querySelector('.cancel-button');
     const saveButton = row.cells[3].querySelector('.save-button');
 
-    const newName = nameInput.value.trim();
-    const newQuantity = quantityInput.value.trim();
-    const newUnit = unitInput.value.trim();
-
-    if (!newName || !newQuantity || !newUnit) {
-        // Prevent saving if any field is empty
-        alert('Name, Quantity, and Unit cannot be empty.');
+    if (combinedQuantityUnit.length != 2) {
+        alert('Please enter quantity and unit in the format "100 Kgs".');
         return;
     }
 
-    const id = row.getAttribute('data-id');
     const updatedItem = {
-        name: newName,
-        quantity: newQuantity,
-        unit: newUnit,
+        name: nameInput.value.trim(),
+        quantity: combinedQuantityUnit[0],
+        unit: combinedQuantityUnit[1],
     };
 
+    const id = row.getAttribute('data-id');
     fetch(`http://localhost:3000/items/${id}`, {
         method: 'PUT',
         headers: {
@@ -159,14 +140,13 @@ function saveItem(row) {
     })
     .then(response => response.json())
     .then(item => {
-        // Update the row content with the updated data
+        row.originalData = item;
+
         nameInput.value = item.name;
-        quantityInput.value = item.quantity;
-        unitInput.value = item.unit;
+        combinedQuantityUnitInput.value = `${item.quantity} ${item.unit}`;
 
         nameInput.disabled = true;
-        quantityInput.disabled = true;
-        unitInput.disabled = true;
+        combinedQuantityUnitInput.disabled = true;
         editButton.style.display = 'inline-block';
         saveButton.style.display = 'none';
         cancelButton.style.display = 'none';

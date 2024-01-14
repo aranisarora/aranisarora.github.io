@@ -2,10 +2,11 @@
   "name": "aranisarora.github.io",
   "version": "1.0.0",
   "description": "Stock manager for Inventure Academy",
-  "main": "script.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
