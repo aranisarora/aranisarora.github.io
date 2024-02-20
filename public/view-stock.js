@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadStockItems() {
-    fetch('http://localhost:3000/items')
+    fetch('/items')
         .then(response => response.json())
         .then(items => items.forEach((item, index) => addItemToTable(item, index)))
         .catch(error => console.error('Error fetching items:', error));
@@ -131,7 +131,7 @@ function saveItem(row) {
     };
 
     const id = row.getAttribute('data-id');
-    fetch(`http://localhost:3000/items/${id}`, {
+    fetch(`/items/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ function saveItem(row) {
 }
 
 function removeItem(id, row) {
-    fetch(`http://localhost:3000/items/${id}`, {
+    fetch(`/items/${id}`, {
         method: 'DELETE',
     })
     .then(response => response.json())

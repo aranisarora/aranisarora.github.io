@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
+app.use(express.static('public'));
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -90,6 +91,7 @@ app.post('/meals', async (req, res) => {
     }
 });
 
+
 // Get all Meals
 app.get('/meals', async (req, res) => {
     try {
@@ -102,6 +104,9 @@ app.get('/meals', async (req, res) => {
 
 // Add Meal to Stock
 app.post('/meals/addToStock', async (req, res) => {
+
+    console.log("in app");
+
     try {
         const { mealId } = req.body;
         const meal = await Meal.findById(mealId);
@@ -118,10 +123,10 @@ app.post('/meals/addToStock', async (req, res) => {
                 await item.save();
             } else {
                 // If item doesn't exist in stock, create a new one
-                const newItem = new Item({ 
-                    name: mealItem.itemName, 
-                    quantity: mealItem.quantity, 
-                    unit: mealItem.unit 
+                const newItem = new Item({
+                    name: mealItem.itemName,
+                    quantity: mealItem.quantity,
+                    unit: mealItem.unit
                 });
                 await newItem.save();
             }
@@ -165,6 +170,9 @@ app.post('/meals/markAsConsumed', async (req, res) => {
     }
 });
 
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
